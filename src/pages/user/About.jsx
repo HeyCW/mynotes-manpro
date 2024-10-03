@@ -1,0 +1,14 @@
+const About = () => {
+
+    return (
+        <div>
+        <h1>About Page</h1>
+        <p>
+            This is the about page. You can use this page to learn more about the
+            company.
+        </p>
+        </div>
+    );
+}
+
+export default About;
