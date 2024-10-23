@@ -41,7 +41,7 @@ body {
     margin-bottom: 1rem;
     background-color: white; 
     z-index: 1;
-    top: 3.7rem;
+    top: 3.4rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: full;
 }
@@ -84,4 +84,15 @@ body {
     .container .ql-toolbar {
         display: none;
     }
+}
+
+
+.draggable-box {
+    z-index: 9999; 
+    position: sticky;
+    bottom: 0; 
+    width: 100%; 
+    background-color: white;
+    border-top: 2px solid #ccc; 
+    overflow: hidden;
 }

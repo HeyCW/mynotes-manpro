@@ -12,9 +12,14 @@ import { useEffect, useState } from "react";
 const Home = () => {
     const { user } = useAuth();
     const token = user.token;
-    const decryptedToken = token ? CryptoJS.AES.decrypt(token, secretKey).toString(CryptoJS.enc.Utf8) : null;
+    try {
+        var decryptedToken = token ? CryptoJS.AES.decrypt(token, secretKey).toString(CryptoJS.enc.Utf8) : null;
+    } catch (error) {
+        console.log(error);
+    }
     const decodedToken = decryptedToken ? jwtDecode(decryptedToken) : null;
     const name = decodedToken ? decodedToken.name : null;
+
     const navigate = useNavigate();
 
     // Handle clicked create note button

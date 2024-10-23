@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Quill from 'quill';
 import 'quill/dist/quill.snow.css';
 import './notes.css'
@@ -11,7 +12,7 @@ import Cookies from 'js-cookie';
 import CryptoJS from 'crypto-js';
 import { secretKey } from '../../babi';
 import { jwtDecode } from 'jwt-decode';
-import Draggable, {DraggableCore} from 'react-draggable';
+import ResizableDraggableBox from '../Modals/ResizableDraggableBox';
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],
@@ -41,11 +42,18 @@ function TextEditor() {
     const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
     const jwt = jwtDecode(decryptedToken);
     const [user, setUser] = useState(
-        Cookies.get('token') ? jwt : null 
+        Cookies.get('token') ? jwt : null || 
+        axios.post('http://localhost:5000/api/auth/re', {
+        
+        })
     );
-    const [activeDrags, setActiveDrags] = useState(0);
-    const [deltaPosition, setDeltaPosition] = useState({x: 0, y: 0});
-    const [controlledPosition, setControlledPosition] = useState({x: -400, y: 200});
+
+    const [commentClick, setCommentClick] = useState(false);
+    const [listUserReadPermission, setListUserReadPermission] = useState([]);
+    const [listUserWritePermission, setListUserWritePermission] = useState([]);
+    const [documentOwner, setDocumentOwner] = useState('');
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         // console.log(user);
@@ -54,10 +62,49 @@ function TextEditor() {
             })
             .then(res => {
                 setNote(res.data.note);
+                setListUserReadPermission(res.data.note.read_access);
+                setListUserWritePermission(res.data.note.write_access);
+                setDocumentOwner(res.data.note.owner);
+
+                // Set Quill access based on note's permissions
+                if (res.data.note.owner === user.email) {
+                    if (quill) {
+                        quill.enable();
+                    }
+                }
+                else if (res.data.note.public_access === "Anyone with the link" && res.data.note.public_permission === "Editor") {
+                    if (quill) {
+                        quill.enable();
+                    }
+                } else if (res.data.note.public_access === "Anyone with the link" && res.data.note.public_permission === "Viewer") {
+                    if (res.data.note.write_access.includes(user.email)) {
+                        if (quill) {
+                            quill.enable();
+                        }
+                    } else {
+                        if (quill) {
+                            quill.enable(false);
+                        }
+                    }
+                } else if (res.data.note.public_access === "Restricted") {
+                    if (res.data.note.write_access.includes(user.email)) {
+                        if (quill) {
+                            quill.enable();
+                        }
+                    }
+                    else if (res.data.note.read_access.includes(user.email)) {
+                        if (quill) {
+                            quill.enable(false);
+                        }
+                    }
+                    else {
+                        navigate('/user/home');
+                    }
+                }
             }).catch(err => {
                 console.log(err);
             });
-    }, []);
+    }, [quill]);
 
     // Connect to sockets
     useEffect(() => {
@@ -103,7 +150,6 @@ function TextEditor() {
 
         socket.once('load-document', (document, namaNote) => {
             quill.setContents(document);
-            quill.enable();
             setDocumentName(namaNote);
         });
 
@@ -125,7 +171,7 @@ function TextEditor() {
 
     // Create the editor
     const wrapperRef = useCallback((wrapper) => {
-        if (!wrapper) return;
+        if (!wrapper ) return;
         wrapper.innerHTML = ''; 
         const editor = document.createElement('div');
         wrapper.append(editor);
@@ -137,8 +183,6 @@ function TextEditor() {
                 }
             }
         });
-        q.format('header', 1);
-
         setQuill(q);
     }, []);
 
@@ -156,30 +200,30 @@ function TextEditor() {
         socket.emit('save-document', documentId, documentName, quill.getContents());
     }
 
-    // const onStart = () => {
-    //     this.setState({activeDrags: ++this.state.activeDrags});
-    // };
+    const handleCommentClick = () => {
+        setCommentClick(!commentClick);
+    }
 
-    // const onStop = () => {
-    //     this.setState({activeDrags: --this.state.activeDrags});
-    // };
-
-    // const dragHandlers = {onStart: this.onStart, onStop: this.onStop};
+    const navigateToHome = () => {
+        navigate('/user/home');
+    }
 
     return (
         <>  
+
             {shareModal ? <ShareModal onClose={()=>setShareModal(false)} note={note} user={user}/> : null}
             <div className='toolbarContainer'>
                 <div className='toolbar'>
-                    <span style={toolbarTab}>Notes</span>
+                    <span style={toolbarTab} onClick={navigateToHome}>Notes</span>
                     <input type="text" style={toolbarTab} value={documentName} onChange={handleInputChange} />
                     <div style={toolbarTab} onClick={handleSave}>Save</div>
                     <div style={toolbarTab} onClick={()=>setShareModal(true)} >Share</div>
-                    <div style={toolbarTab} >Comment</div>
+                    <div style={toolbarTab} onClick={handleCommentClick}>Comment</div>
                 </div>
             </div>
             
             <div className="container" ref={wrapperRef}></div>
+            { commentClick ? <ResizableDraggableBox document_id={documentId} owner={user}/> : null }
         </>
     );
 }
