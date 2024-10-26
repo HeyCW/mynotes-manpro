@@ -7,6 +7,9 @@ import { FaEarthAmericas } from "react-icons/fa6";
 import axios from "axios";
 import ProfilePicture from "../ProfilePicture";
 import InputAuto from "../InputAuto";
+import Cookies from 'js-cookie';
+import CryptoJS from 'crypto-js';
+import { secretKey } from '../../babi';
 
 
 const ShareModal = ({onClose, note, user}) => {
@@ -17,12 +20,19 @@ const ShareModal = ({onClose, note, user}) => {
     const [listUserWritePermission, setListUserWritePermission] = useState([]);
     const [email, setEmail] = useState('');
     const [shouldRerender, setShouldRerender] = useState(false);
+    const token = Cookies.get('token');
+    const decryptedBytes = CryptoJS.AES.decrypt(token, secretKey);
+    const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
 
     useEffect(() => {
         
         if (note) {
             axios.post('http://localhost:5000/api/notes/getNoteById', {
                 'id': note._id
+            }, {
+                headers: {
+                    'Authorization': `Bearer ${decryptedToken}`,
+                }
             })
             .then(res => {
                 setSelected(res.data.note.public_access);
@@ -50,7 +60,13 @@ const ShareModal = ({onClose, note, user}) => {
         axios.post('http://localhost:5000/api/notes/changePublicAccess', {
             id: currentNote._id,
             access: value
-        }).then(res => {
+        }, 
+        {
+            headers: {
+                'Authorization': `Bearer ${decryptedToken}`,
+            }
+        }
+    ).then(res => {
             console.log(res);
         }).catch(err => {
             console.log(err);
@@ -63,7 +79,14 @@ const ShareModal = ({onClose, note, user}) => {
         axios.post('http://localhost:5000/api/notes/changePublicPermission', {
             id: currentNote._id,
             public_permission: value
-        }).then(res => {
+        },
+        {
+            headers: {
+                'Authorization': `Bearer ${decryptedToken}`,
+            }
+        }
+    
+        ).then(res => {
             console.log(res);
         }).catch(err => {
             console.log(err);
@@ -82,7 +105,15 @@ const ShareModal = ({onClose, note, user}) => {
             axios.post('http://localhost:5000/api/notes/addReadAccess', {
                 id: currentNote._id,
                 email: email
-            }).then(res => {
+            },
+
+            {
+                headers: {
+                    'Authorization': `Bearer ${decryptedToken}`,
+                }
+            }
+        
+            ).then(res => {
                 console.log(res);
             }).catch(err => {
                 console.log(err);
@@ -93,7 +124,15 @@ const ShareModal = ({onClose, note, user}) => {
             axios.post('http://localhost:5000/api/notes/removeWriteAccess', {
                 id: currentNote._id,
                 email: email
-            }).then(res => {
+            },
+
+            {
+                headers: {
+                    'Authorization': `Bearer ${decryptedToken}`,
+                }
+            }
+
+            ).then(res => {
                 console.log(res);
             }).catch(err => {
                 console.log(err);
@@ -105,7 +144,16 @@ const ShareModal = ({onClose, note, user}) => {
             axios.post('http://localhost:5000/api/notes/addWriteAccess', {
                 id: currentNote._id,
                 email: email
-            }).then(res => {
+            },
+
+            {
+                headers: {
+                    'Authorization': `Bearer ${decryptedToken}`,
+                }
+            }
+        
+
+            ).then(res => {
                 console.log(res);
             }).catch(err => {
                 console.log(err);
@@ -116,7 +164,16 @@ const ShareModal = ({onClose, note, user}) => {
             axios.post('http://localhost:5000/api/notes/removeReadAccess', {
                 id: currentNote._id,
                 email: email
-            }).then(res => {
+            },
+
+            {
+                headers: {
+                    'Authorization': `Bearer ${decryptedToken}`,
+                }
+            }
+        
+        
+            ).then(res => {
                 console.log(res);
             }).catch(err => {
                 console.log(err);
@@ -128,7 +185,15 @@ const ShareModal = ({onClose, note, user}) => {
         axios.post('http://localhost:5000/api/notes/addReadAccess', {
             id: currentNote._id,
             email: email
-        }).then(res => {
+        },
+
+        {
+            headers: {
+                'Authorization': `Bearer ${decryptedToken}`,
+            }
+        }
+    
+        ).then(res => {
             console.log(res);
             setShouldRerender(!shouldRerender);
         }).catch(err => {

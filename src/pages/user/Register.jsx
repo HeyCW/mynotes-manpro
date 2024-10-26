@@ -1,19 +1,15 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import useAuth from '../../hooks/useAuth';
 import DropDown from '../../components/DropDown';
 import CryptoJS from 'crypto-js';
 import { secretKey } from "../../babi";
 import axios from 'axios';
 import { SignJWT } from 'jose'; 
-import { jwtDecode } from 'jwt-decode';
 
 const Register = () => {
 
     const [borderOn, setBorderOn] = useState(true);
-    const [token, setToken] = useState(null);
-    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [userName, setUserName] = useState('');

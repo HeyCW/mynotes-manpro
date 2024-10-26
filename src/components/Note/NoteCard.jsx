@@ -7,7 +7,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { GoShareAndroid } from "react-icons/go";
 import {EditModal, ShareModal} from '../Modals';
 
-const NoteCard = ({ note, onDelete, onEdit,user }) => {
+const NoteCard = ({ note, onDelete, onEdit, user, page }) => {
     const menuRef = useRef(null);
     const [showMenu, setShowMenu] = useState(false);
     const [editModal, setEditModal] = useState(false);
@@ -94,9 +94,13 @@ const NoteCard = ({ note, onDelete, onEdit,user }) => {
                 <div className="note-card-body p-6 text-surface dark:text-white">
                     <h5 className="note-card-title mb-10 text-xl font-medium text-black overflow-hidden">{note.name}</h5>
                     
-                    <div className='flex justify-end'>
-                        <HiDotsVertical 
-                        className="text-black z-10 three-dot-icon" onClick={handleMenu}/>
+                    <div className='flex justify-between'>
+                        
+                        {note.public_access === "Restricted" ? <div className="text-red-500 text-sm">Need Access</div> : <div className="text-green-500 text-sm">Open for public</div>}
+
+                        {page === true ? <HiDotsVertical 
+                        className="text-black z-10 three-dot-icon" onClick={handleMenu}/> : null}
+
                         {showMenu && (
                             <div 
                             ref={menuRef}

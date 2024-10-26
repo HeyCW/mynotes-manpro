@@ -6,6 +6,7 @@ import { secretKey } from "../../babi";
 import useAuth  from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 
 const Login = () => {
@@ -19,7 +20,7 @@ const Login = () => {
 
     // Handle login
     const handleLogin = () => {
-        Cookies.set('token', token, { expires: 7});
+        Cookies.set('token', token, { expires: 7 });
         login(token);
         navigate('/user/home');
     };
@@ -30,14 +31,15 @@ const Login = () => {
                 
                     email: email
                 
-            }).then(res => {
+            }
+        
+        ).then(res => {
                 const decryptedPassword = CryptoJS.AES.decrypt(res.data.password, secretKey).toString(CryptoJS.enc.Utf8);
                 if (password === decryptedPassword) {
-                    console.log('Password benar');
                     handleToken(res.data.token);
                 }
                 else {
-                    alert('Password salah');
+                    alert('Email / Password salah');
                 }
             });
         } catch (error) {
@@ -47,6 +49,14 @@ const Login = () => {
     
 
     const handleToken = (token) => {
+        const decryptedToken = jwtDecode(token);
+        axios.post('http://localhost:5000/api/update/token', {
+            'email': decryptedToken.email,
+            'token': token
+        }).then(res => {
+            console.log(res);
+        });
+
         const encryptedToken = CryptoJS.AES.encrypt(token, secretKey).toString();
         setToken(encryptedToken);
     }

@@ -41,25 +41,26 @@ function TextEditor() {
     const decryptedBytes = CryptoJS.AES.decrypt(Cookies.get('token'), secretKey);
     const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
     const jwt = jwtDecode(decryptedToken);
-    const [user, setUser] = useState(
-        Cookies.get('token') ? jwt : null || 
-        axios.post('http://localhost:5000/api/auth/re', {
-        
-        })
-    );
-
+    const [user, setUser] = useState(jwt);
     const [commentClick, setCommentClick] = useState(false);
     const [listUserReadPermission, setListUserReadPermission] = useState([]);
     const [listUserWritePermission, setListUserWritePermission] = useState([]);
     const [documentOwner, setDocumentOwner] = useState('');
 
     const navigate = useNavigate();
-
+    
     useEffect(() => {
-        // console.log(user);
         axios.post('http://localhost:5000/api/notes/getNoteById', {
             'id': documentId
-            })
+            },
+            
+            {
+                headers: {
+                    'Authorization': `Bearer ${decryptedToken}`,
+                }
+            }
+
+        )
             .then(res => {
                 setNote(res.data.note);
                 setListUserReadPermission(res.data.note.read_access);
@@ -98,13 +99,13 @@ function TextEditor() {
                         }
                     }
                     else {
-                        navigate('/user/home');
+                        navigate('/user/home', { state: { message: 'You do not have access to this document' } });
                     }
                 }
             }).catch(err => {
                 console.log(err);
             });
-    }, [quill]);
+    }, [quill, jwt]);
 
     // Connect to sockets
     useEffect(() => {

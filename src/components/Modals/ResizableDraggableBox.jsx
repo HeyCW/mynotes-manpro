@@ -4,6 +4,9 @@ import ProfilePicture from '../ProfilePicture';
 import axios from 'axios';
 import CommentBox from '../CommentBox';
 import { IoSend } from "react-icons/io5";
+import Cookies from 'js-cookie';
+import CryptoJS from 'crypto-js';
+import { secretKey } from '../../babi';
 
 export default function ResizableDraggableBox({document_id, owner}) {
 
@@ -12,6 +15,10 @@ export default function ResizableDraggableBox({document_id, owner}) {
     const [comments, setComments] = useState([]);
     const [commentContent, setCommentContent] = useState('');
     const containerRef = useRef(null);
+    const token = Cookies.get('token');
+    const decryptedBytes = CryptoJS.AES.decrypt(token, secretKey);
+    const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
+
 
     const onClick = () => {
 
@@ -30,6 +37,10 @@ export default function ResizableDraggableBox({document_id, owner}) {
             'document_id': document_id,
             'owner': owner['name'],
             'comment': commentContent
+        }, {
+            headers: {
+                'Authorization': `Bearer ${decryptedToken}`,
+            }
         }).then(res => {
             console.log(res);
             setComments([...comments, res.data]);
@@ -47,7 +58,13 @@ export default function ResizableDraggableBox({document_id, owner}) {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/comments/get');
+                const res = await axios.get('http://localhost:5000/api/comments/get',
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${decryptedToken}`,
+                        }
+                    }
+                );
                 setComments(res.data);
             } catch (err) {
                 console.error('Error fetching comments:', err);
