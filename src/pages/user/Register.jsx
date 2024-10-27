@@ -6,6 +6,7 @@ import CryptoJS from 'crypto-js';
 import { secretKey } from "../../babi";
 import axios from 'axios';
 import { SignJWT } from 'jose'; 
+import config from '../../config';
 
 const Register = () => {
 
@@ -58,7 +59,7 @@ const Register = () => {
 
         
             
-        axios.post('http://localhost:5000/api/users/add', {
+        axios.post(`${config.apiUrl}/api/users/add`, {
             email: email,
             password: CryptoJS.AES.encrypt(password, secretKey).toString(),
             name: userName,

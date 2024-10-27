@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import CryptoJS from "crypto-js";
 import { secretKey } from "../../babi";
 import Swal from 'sweetalert2';
+import config from "../../config";
 
 const NoteContainer = ({user, global, value=''}) => {
 
@@ -39,7 +40,7 @@ const NoteContainer = ({user, global, value=''}) => {
         if (!global) {
             async function fetchNotes() {
                 try {
-                    const response = await axios.get('http://localhost:5000/api/notes', {
+                    const response = await axios.get(`${config.apiUrl}/api/notes`, {
                         headers: {
                             'Authorization': `Bearer ${decryptedToken}`, // ganti dengan token yang sesuai
                         },
@@ -57,7 +58,7 @@ const NoteContainer = ({user, global, value=''}) => {
         else{
             async function fetchNotes() {
                 try {
-                    const response = await axios.post('http://localhost:5000/api/notes/getByOwner', {
+                    const response = await axios.post(`${config.apiUrl}/api/notes/getByOwner`, {
                         'owner': user.email
 
                     },
@@ -91,7 +92,7 @@ const NoteContainer = ({user, global, value=''}) => {
     
     const handleDelete = async (note) => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/notes/delete`, { 
+            const response = await axios.post(`${config.apiUrl}/api/notes/delete`, { 
                 id: note._id 
             },
 
@@ -110,7 +111,7 @@ const NoteContainer = ({user, global, value=''}) => {
 
     const handleEditName = async (note, name) => {
         try {
-            const response = await axios.post(`http://localhost:5000/api/notes/edit`, { 
+            const response = await axios.post(`${config.apiUrl}/api/notes/edit`, { 
                 id: note._id,
                 name: name
             },

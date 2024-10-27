@@ -7,6 +7,7 @@ import { IoSend } from "react-icons/io5";
 import Cookies from 'js-cookie';
 import CryptoJS from 'crypto-js';
 import { secretKey } from '../../babi';
+import config from '../../config';
 
 export default function ResizableDraggableBox({document_id, owner}) {
 
@@ -33,7 +34,7 @@ export default function ResizableDraggableBox({document_id, owner}) {
     }
 
     const sendClick = () => {
-        axios.post('http://localhost:5000/api/comments/add', {
+        axios.post(`${config.apiUrl}/api/comments/add`, {
             'document_id': document_id,
             'owner': owner['name'],
             'comment': commentContent
@@ -58,7 +59,7 @@ export default function ResizableDraggableBox({document_id, owner}) {
     useEffect(() => {
         const fetchComments = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/comments/get',
+                const res = await axios.get(`${config.apiUrl}/api/comments/get`,
                     {
                         headers: {
                             'Authorization': `Bearer ${decryptedToken}`,

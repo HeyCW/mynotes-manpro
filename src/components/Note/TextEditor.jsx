@@ -13,6 +13,7 @@ import CryptoJS from 'crypto-js';
 import { secretKey } from '../../babi';
 import { jwtDecode } from 'jwt-decode';
 import ResizableDraggableBox from '../Modals/ResizableDraggableBox';
+import config from '../../config';
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],
@@ -50,7 +51,7 @@ function TextEditor() {
     const navigate = useNavigate();
     
     useEffect(() => {
-        axios.post('http://localhost:5000/api/notes/getNoteById', {
+        axios.post(`${config.apiUrl}/api/notes/getNoteById`, {
             'id': documentId
             },
             

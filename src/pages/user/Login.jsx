@@ -7,6 +7,7 @@ import useAuth  from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import config from "../../config";
 
 
 const Login = () => {
@@ -27,7 +28,7 @@ const Login = () => {
 
     const handleTokenLoginManual = async () => {
         try {
-            await axios.post('http://localhost:5000/api/users/getByEmail', {
+            await axios.post(`${config.apiUrl}/api/users/getByEmail`, {
                 
                     email: email
                 
@@ -50,7 +51,7 @@ const Login = () => {
 
     const handleToken = (token) => {
         const decryptedToken = jwtDecode(token);
-        axios.post('http://localhost:5000/api/update/token', {
+        axios.post(`${config.apiUrl}/api/update/token`, {
             'email': decryptedToken.email,
             'token': token
         }).then(res => {

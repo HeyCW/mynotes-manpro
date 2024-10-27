@@ -10,6 +10,7 @@ import InputAuto from "../InputAuto";
 import Cookies from 'js-cookie';
 import CryptoJS from 'crypto-js';
 import { secretKey } from '../../babi';
+import config from "../../config";
 
 
 const ShareModal = ({onClose, note, user}) => {
@@ -27,7 +28,7 @@ const ShareModal = ({onClose, note, user}) => {
     useEffect(() => {
         
         if (note) {
-            axios.post('http://localhost:5000/api/notes/getNoteById', {
+            axios.post(`${config.apiUrl}/api/notes/getNoteById`, {
                 'id': note._id
             }, {
                 headers: {
@@ -57,7 +58,7 @@ const ShareModal = ({onClose, note, user}) => {
 
     const handleSelected = (value) => {
         setSelected(value);
-        axios.post('http://localhost:5000/api/notes/changePublicAccess', {
+        axios.post(`${config.apiUrl}/api/notes/changePublicAccess`, {
             id: currentNote._id,
             access: value
         }, 
@@ -76,7 +77,7 @@ const ShareModal = ({onClose, note, user}) => {
 
     const handlePermission = (value) => {
         setPermission(value);
-        axios.post('http://localhost:5000/api/notes/changePublicPermission', {
+        axios.post(`${config.apiUrl}/api/notes/changePublicPermission`, {
             id: currentNote._id,
             public_permission: value
         },
@@ -102,7 +103,7 @@ const ShareModal = ({onClose, note, user}) => {
         if (permission === 'Viewer') {
             setListUserReadPermission([...listUserReadPermission, email]);
 
-            axios.post('http://localhost:5000/api/notes/addReadAccess', {
+            axios.post(`${config.apiUrl}/api/notes/addReadAccess`, {
                 id: currentNote._id,
                 email: email
             },
@@ -121,7 +122,7 @@ const ShareModal = ({onClose, note, user}) => {
 
             setListUserWritePermission(listUserWritePermission.filter((user) => user !== email));
 
-            axios.post('http://localhost:5000/api/notes/removeWriteAccess', {
+            axios.post(`${config.apiUrl}/api/notes/removeWriteAccess`, {
                 id: currentNote._id,
                 email: email
             },
@@ -141,7 +142,7 @@ const ShareModal = ({onClose, note, user}) => {
         } else {
             setListUserWritePermission([...listUserWritePermission, email]);
 
-            axios.post('http://localhost:5000/api/notes/addWriteAccess', {
+            axios.post(`${config.apiUrl}/api/notes/addWriteAccess`, {
                 id: currentNote._id,
                 email: email
             },
@@ -161,7 +162,7 @@ const ShareModal = ({onClose, note, user}) => {
 
             setListUserReadPermission(listUserReadPermission.filter((user) => user !== email));
 
-            axios.post('http://localhost:5000/api/notes/removeReadAccess', {
+            axios.post(`${config.apiUrl}/api/notes/removeReadAccess`, {
                 id: currentNote._id,
                 email: email
             },
@@ -182,7 +183,7 @@ const ShareModal = ({onClose, note, user}) => {
     }
 
     const handleAddEmailReadUser = (email) => {
-        axios.post('http://localhost:5000/api/notes/addReadAccess', {
+        axios.post(`${config.apiUrl}/api/notes/addReadAccess`, {
             id: currentNote._id,
             email: email
         },
