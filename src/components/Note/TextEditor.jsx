@@ -99,7 +99,7 @@ function TextEditor() {
                         }
                     }
                     else {
-                        navigate('/user/home', { state: { message: 'You do not have access to this document' } });
+                        navigate('/user/home', { state: { message: 'You do not have access to this document. Email the owner for the access' } });
                     }
                 }
             }).catch(err => {

@@ -92,11 +92,14 @@ const NoteCard = ({ note, onDelete, onEdit, user, page }) => {
                     <div className="note-card-image h-64 border-b border-black" ref={wrapperRef}></div>
                 </a>
                 <div className="note-card-body p-6 text-surface dark:text-white">
-                    <h5 className="note-card-title mb-10 text-xl font-medium text-black overflow-hidden">{note.name}</h5>
+                    <h5 className="note-card-title text-xl font-medium text-black overflow-hidden">{note.name}</h5>
+                    <h5 className="note-card-title mb-10 text-sm font-medium text-gray-400 overflow-hidden">{note.owner}</h5>                    
                     
                     <div className='flex justify-between'>
                         
-                        {note.public_access === "Restricted" ? <div className="text-red-500 text-sm">Need Access</div> : <div className="text-green-500 text-sm">Open for public</div>}
+                        {note.owner === user.email ? <div className="text-green-500 text-sm">You are the owner</div> :
+                         (note.public_access === "Anyone with the link" ? <div className="text-green-500 text-sm">Open for public</div> : 
+                        (note.read_access.includes(user.email) ? <div className="text-green-500 text-sm">You have read acccess</div> : (note.write_access.includes(user.email) ? <div className="text-green-500 text-sm">You have write acccess</div> : <div className="text-red-500 text-sm">Need Access</div>))) }
 
                         {page === true ? <HiDotsVertical 
                         className="text-black z-10 three-dot-icon" onClick={handleMenu}/> : null}

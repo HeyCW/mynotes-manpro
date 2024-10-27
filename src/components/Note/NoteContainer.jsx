@@ -7,11 +7,12 @@ import CryptoJS from "crypto-js";
 import { secretKey } from "../../babi";
 import Swal from 'sweetalert2';
 
-const NoteContainer = ({user, global}) => {
+const NoteContainer = ({user, global, value=''}) => {
 
     const location = useLocation();
     let message = location.state?.message;
     const [notes, setNotes] = useState([]);
+    const [noteSearch, setNoteSearch] = useState([]);
     const token = Cookies.get('token');
     const decryptedBytes = CryptoJS.AES.decrypt(Cookies.get('token'), secretKey);
     const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
@@ -45,6 +46,7 @@ const NoteContainer = ({user, global}) => {
                     });
                     
                     setNotes(response.data);
+                    setNoteSearch(response.data);
                 } catch (error) {
                     console.error(error);
                 }
@@ -66,8 +68,7 @@ const NoteContainer = ({user, global}) => {
                     });
                     
                     setNotes(response.data);
-                    console.log(response.data);
-                    console.log(user.email);
+                    setNoteSearch(response.data);
                 } catch (error) {
                     console.error(error);
                 }
@@ -78,6 +79,14 @@ const NoteContainer = ({user, global}) => {
 
 
     }, [global]);
+
+    useEffect(() => {
+        if (value === '') {
+            setNoteSearch(notes);
+        } else {
+            setNoteSearch(notes.filter(note => note.name.toLowerCase().includes(value.toLowerCase())));
+        }
+    }, [value]);
     
     
     const handleDelete = async (note) => {
@@ -125,7 +134,7 @@ const NoteContainer = ({user, global}) => {
 
     return (
     <div className="grid xl:grid-cols-4 md:grid-cols-3 grid-cols-1  gap-4 sm:w-4/5 w-3/4 justify-center mx-auto mt-20 mb-28">
-            {notes.map(note => (
+            {noteSearch.map(note => (
                 <NoteCard key={note._id} note={note} onDelete = {handleDelete} onEdit = {handleEditName} user={user} page={global}/>
             ))}
     </div>
