@@ -138,7 +138,14 @@ function TextEditor() {
             isRemoteUpdate = false;
         };
 
+        const handlerPhone = (delta) => {
+            isRemoteUpdate = true;
+            quill.setContents(delta, 'api');
+            isRemoteUpdate = false;
+        };
+
         socket.on('receive-changes', handler);
+        socket.on('receive-changes-phone', handlerPhone);
 
         return () => {
             socket.off('receive-changes', handler);
