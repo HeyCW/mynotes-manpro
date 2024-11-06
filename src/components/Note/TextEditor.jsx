@@ -126,7 +126,11 @@ function TextEditor() {
 
         const handleTextChange = (delta, oldDelta, source) => {
             if (source === 'user' && !isRemoteUpdate) {
-                socket.emit('send-changes', documentId, delta);
+                // Ambil seluruh konten dokumen dalam format JSON
+                const documentContent = quill.getContents();
+                
+                // Kirim seluruh konten dokumen ke server melalui socket
+                socket.emit('send-changes', documentId, documentContent);
             }
         };
 
@@ -134,7 +138,7 @@ function TextEditor() {
 
         const handler = (delta) => {
             isRemoteUpdate = true;
-            quill.updateContents(delta, 'api');
+            quill.setContents(delta, 'api');
             isRemoteUpdate = false;
         };
 
