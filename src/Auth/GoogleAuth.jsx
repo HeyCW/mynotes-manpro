@@ -21,7 +21,7 @@ const GoogleAuth = ({onHandleToken}) => {
     };
 
     return (
-        <div className='mt-10 mr-5'>
+        <div className='mt-10'>
             <GoogleLogin onSuccess={responseMessage} onError={errorMessage} clientId ='682490005599-m3hj1sjh8pikio9m9rb4jh8vgh7o9u18.apps.googleusercontent.com' />
         </div>
     )
