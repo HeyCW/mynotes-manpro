@@ -6,8 +6,9 @@ import BlueButton from "../../components/BlueButton";
 import { useNavigate } from "react-router-dom";
 import {v4 as uuidV4} from 'uuid';
 import NoteContainer from "../../components/Note/NoteContainer";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import BlackButton from "../../components/BlackButton";
+import Draw from "../../components/Animation/draw";
 
 
 const Home = () => {
@@ -15,6 +16,23 @@ const Home = () => {
     const token = user.token;
     const [global, setGlobal] = useState(false);
     const [searcbValue, setSearchValue] = useState('');
+    const searchRef = useRef(null);
+
+    useEffect (() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.key === 'k') {
+                event.preventDefault();
+                searchRef.current.focus();
+                
+            }
+        searchRef.current.focus();
+        }
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
     try {
         var decryptedToken = token ? CryptoJS.AES.decrypt(token, secretKey).toString(CryptoJS.enc.Utf8) : null;
@@ -41,7 +59,7 @@ const Home = () => {
 
     return (
         <>  
-            <div className="md:flex w-4/5 md:justify-between justify-center text-center mx-auto mt-10 dark:text-white">
+            <div className="md:flex w-4/5 md:justify-between justify-center text-center mx-auto mt-10 dark:text-white relative z-20">
                 <h1 className="text-2xl font-bold mt-0 md:mt-2 mb-10">WELCOME {name}</h1>
             </div>
 
@@ -57,7 +75,12 @@ const Home = () => {
                     </svg>
                 </div>
 
-                <input onChange={handleSearch} value={searcbValue} type="text" className="hover:shadow-xl block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Cari untuk menemukan catatan"/>
+                <input ref={searchRef} onChange={handleSearch} value={searcbValue} type="text" className="hover:shadow-xl block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search for available notes"/>
+                <p className="absolute inset-y-0 right-0 flex pointer-events-none items-center pr-3 text-gray-500 dark:text-gray-400">
+                    <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">Ctrl</kbd> 
+                + 
+                <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg dark:bg-gray-600 dark:text-gray-100 dark:border-gray-500">K</kbd>
+                </p>
             </div>
 
             {global ? <NoteContainer user={decodedToken} global={false} value={searcbValue}/> :

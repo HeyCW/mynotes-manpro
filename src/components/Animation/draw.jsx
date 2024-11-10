@@ -1,36 +1,41 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import './draw.css';
 
-const Draw = () => {
+const Draw = ({ bgImage, inter, isMoveable, maxScale }) => {
     const [effects, setEffect] = useState([]);
 
     const handleMouseMove = (e) => {
-        const newEffect = {
-            id: Date.now(),
-            x: e.clientX,
-            y: e.clientY,
-            timeout: null
-        };
-        setEffect((preveffects)=>{
-            const updatedEffect = [...preveffects, newEffect]
-            newEffect.timeout = setTimeout(() => {
-                setEffect((preveffects)=>preveffects.filter(effect => effect.id !== newEffect.id));
-            }, 5000);
-            return updatedEffect;
-        });
+        if (isMoveable) {
+            const newEffect = {
+                id: Date.now(),
+                x: e.clientX,
+                y: e.clientY,
+                timeout: null
+            };
+            setEffect((preveffects) => {
+                const updatedEffect = [...preveffects, newEffect]
+                newEffect.timeout = setTimeout(() => {
+                    setEffect((preveffects) => preveffects.filter(effect => effect.id !== newEffect.id));
+                }, 5000);
+                return updatedEffect;
+            });
 
-        setTimeout(() => {
-            setEffect((preveffects)=>preveffects.filter(effect => effect.id !== newEffect.id));
-        }, 5000);
+            setTimeout(() => {
+                setEffect((preveffects) => preveffects.filter(effect => effect.id !== newEffect.id));
+            }, 5000);
+        }
     };
 
     useEffect(() => {
-        window.addEventListener('mousemove', handleMouseMove);
-
+        if (isMoveable) {
+            window.addEventListener('mousemove', handleMouseMove);  
+        }
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
-        };
-    });
+        }
+    }, [isMoveable]);
+
+
 
     //adding automatic hover
     useEffect(() => {
@@ -41,41 +46,66 @@ const Draw = () => {
                 y: Math.random() * window.innerHeight,
                 timeout: null
             };
-            setEffect((preveffects)=>{
+            setEffect((preveffects) => {
                 const updatedEffect = [...preveffects, newEffect]
                 newEffect.timeout = setTimeout(() => {
-                    setEffect((preveffects)=>preveffects.filter(effect => effect.id !== newEffect.id));
+                    setEffect((preveffects) => preveffects.filter(effect => effect.id !== newEffect.id));
                 }, 5000);
                 return updatedEffect;
             });
-        }, 100);
+        }, (inter ? inter : 100));
 
         return () => {
             clearInterval(interval);
         };
     }, []);
 
+    // Inject dynamic styles
+    useEffect(() => {
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fade-out {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(${maxScale? maxScale : 10});
+                }
+            }
+            .animate-fade-out {
+                animation: fade-out 5s ease-in-out forwards;
+            }
+        `;
+        document.head.appendChild(style);
+
+        return () => {
+            document.head.removeChild(style);
+        };
+    }, [maxScale]);
+
 
     return (
         <div
-            className="fixed z-0 w-screen min-h-screen bg-cover bg-center"
+            className="fixed z-0 top-0 w-screen min-h-screen bg-cover bg-center"
             onMouseMove={handleMouseMove}
-            style={{ backgroundImage: 'url(https://plus.unsplash.com/premium_photo-1727363542778-269c2812bb55?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' }}
-            >
+            style={{ backgroundImage: bgImage && bgImage }}
+        >
             {effects.map((effect) => (
                 <span
-                key={effect.id}
-                className="absolute rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-500 dark:bg-gradient-to-r dark:from-amber-500 dark:to-pink-500 animate-fade-out"
-                style={{
-                    width: '20px',
-                    height: '20px',
-                    left: effect.x-10 ,
-                    top: effect.y-10 ,
-                }}
+                    key={effect.id}
+                    className="absolute rounded-full bg-gradient-to-r from-fuchsia-500 to-cyan-500 dark:bg-gradient-to-r dark:from-amber-500 dark:to-pink-500 animate-fade-out"
+                    style={{
+                        width: '20px',
+                        height: '20px',
+                        left: effect.x,
+                        top: effect.y ,
+                    }}
                 />
             ))}
-            </div>
-        );
+        </div>
+    );
 }
 
 export default Draw;

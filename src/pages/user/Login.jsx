@@ -95,7 +95,7 @@ const Login = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen  dark:text-white" >
-            <Draw />
+            <Draw isMoveable={true} bgImage='url(https://plus.unsplash.com/premium_photo-1727363542778-269c2812bb55?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)' />
             <div className="absolute z-1 inset-0 bg-white opacity-20"></div>
             <div className="absolute z-9 shadow-xl bg-gradient-to-r from-yellow-400 to-amber-200 dark:from-red-500 dark:to-orange-500 rounded-tr-full rounded-bl-full max-w-2xl w-[95%] mx-auto p-0">
                 <div className="relative z-10 shadow-xl bg-gradient-to-r from-teal-400 to-yellow-200 bg-opacity-95 dark:bg-gradient-to-r dark:from-slate-900 dark:to-slate-700 dark:bg-opacity-[95%] rounded-tl-full rounded-br-full max-w-2xl w-[95%] mx-auto m-0">

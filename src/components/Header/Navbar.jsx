@@ -18,7 +18,7 @@ const NavbarHome = () => {
   }
 
   return (
-    <nav className="bg-white border-gray-200 dark:bg-gray-900">
+    <nav className="bg-white border-gray-200 dark:bg-gray-900 relative z-20 shadow-lg">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <div className="text-lg font-semibold">
           <Link to="/user/home" className="text-black dark:text-white">MyNotes</Link>
