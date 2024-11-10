@@ -41,7 +41,7 @@ const Home = () => {
 
     return (
         <>  
-            <div className="md:flex w-4/5 md:justify-between justify-center text-center mx-auto mt-10">
+            <div className="md:flex w-4/5 md:justify-between justify-center text-center mx-auto mt-10 dark:text-white">
                 <h1 className="text-2xl font-bold mt-0 md:mt-2 mb-10">WELCOME {name}</h1>
             </div>
 
