@@ -47,7 +47,7 @@ const Home = () => {
 
             <div className="flex w-3/4 gap-10 md:justify-start justify-center mx-auto md:ml-[10%] mb-20">
                 <BlueButton width={'w-full md:w-1/5 hover:shadow-lg'} handleClick={handleGlobalButton} >{global ? 'Your Work' : 'Global'}</BlueButton>
-                <BlackButton width={'w-full md:w-1/5 hover:shadow-lg hover:border-2 hover:border-black'} handleClick={handleCreateNote} >Create Note +</BlackButton>
+                <BlackButton width={'w-full md:w-1/5 hover:shadow-lg'} handleClick={handleCreateNote} >Create Note +</BlackButton>
             </div>
 
             <div className="">
