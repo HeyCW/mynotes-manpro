@@ -200,23 +200,7 @@ function TextEditor() {
         setQuill(q);
     }, []);
 
-    const inputRef = React.useRef(null);
-
-    useEffect (() => {
-        const handleKeyDown = (event) => {
-            if (event.ctrlKey && event.key === 'k') {
-                event.preventDefault();
-                inputRef.current.focus();
-                
-            }
-        inputRef.current.focus();
-        }
-        window.addEventListener('keydown', handleKeyDown);
-
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
+    
 
 
     const toolbarTab = {
@@ -246,7 +230,7 @@ function TextEditor() {
             {shareModal ? <ShareModal onClose={() => setShareModal(false)} note={note} user={user} /> : null}
             <div className='toolbarContainer dark:!bg-gray-800 px-2'>
                 <div className='toolbar bg-black dark:!bg-gray-800 !grid md:!grid-cols-5 !grid-cols-4 !gap-2'>
-                    <input ref={inputRef} type="text" className='!col-span-4 md:!col-span-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Enter note title' style={toolbarTab} value={documentName} onChange={handleInputChange} />
+                    <input type="text" className='!col-span-4 md:!col-span-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' placeholder='Enter note title' style={toolbarTab} value={documentName} onChange={handleInputChange} />
                     <span style={toolbarTab} className='relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-teal-300 to-lime-300 group-hover:from-teal-300 group-hover:to-lime-300 dark:text-white dark:hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-lime-200 dark:focus:ring-lime-800' onClick={navigateToHome}>
                         <span class="text-xs sm:text-sm md:text-md !text-center w-full relative py-1 m-0.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
                             Notes
