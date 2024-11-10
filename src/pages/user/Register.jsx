@@ -5,8 +5,9 @@ import DropDown from '../../components/DropDown';
 import CryptoJS from 'crypto-js';
 import { secretKey } from "../../babi";
 import axios from 'axios';
-import { SignJWT } from 'jose'; 
+import { SignJWT } from 'jose';
 import config from '../../config';
+import Draw from '../../components/Animation/draw';
 
 const Register = () => {
 
@@ -52,18 +53,18 @@ const Register = () => {
         }
 
         const token = await new SignJWT({ email: user.email, name: user.name, major: user.major })
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime('1h')
-        .sign(new TextEncoder().encode(secretKey));
+            .setProtectedHeader({ alg: 'HS256' })
+            .setIssuedAt()
+            .setExpirationTime('1h')
+            .sign(new TextEncoder().encode(secretKey));
 
-        
-            
+
+
         axios.post(`${config.apiUrl}/api/users/add`, {
             email: email,
             password: CryptoJS.AES.encrypt(password, secretKey).toString(),
             name: userName,
-            major: selected, 
+            major: selected,
             token: token
         }).then((res) => {
             console.log(res.data);
@@ -74,37 +75,52 @@ const Register = () => {
 
     }
 
+    const labelClass = "block mb-2 text-sm font-medium text-gray-900 dark:text-white";
+    const inputClass = "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500";
+
     return (
-        <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-                <div className="flex items-center justify-center mb-10">
-                    <h1 className="text-7xl font-bold mr-3">My Notes</h1>
-                    <div className={`border-l-4 ${borderOn ? 'border-l-black' : 'border-l-transparent'} p-10`}></div>
-                </div>
-                <div className="grid w-[58%] mx-auto">
-                    <h2 className="text-3xl font-semibold mt-4 mb-5">Register</h2>
+        <div className="flex items-center justify-center min-h-screen dark:text-white">
+            <Draw />
+            <div className="absolute z-1 inset-0 bg-white opacity-20"></div>
+            <div className="absolute z-9 shadow-xl bg-gradient-to-r from-yellow-400 to-amber-200 dark:from-red-500 dark:to-orange-500 rounded-tr-full rounded-bl-full max-w-2xl w-[95%] mx-auto p-0">
+                <div className="relative z-10 shadow-xl bg-gradient-to-r from-teal-400 to-yellow-200 bg-opacity-95 dark:bg-gradient-to-r dark:from-slate-900 dark:to-slate-700 dark:bg-opacity-[95%] rounded-tl-full rounded-br-full max-w-2xl w-[95%] mx-auto m-0">
+                    <div className="text-center flex items-center justify-center my-5 sm:my-10 pt-20 px-4 sm:px-8 pl-10 sm:pl-20">
+                        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mr-3 sm:mr-3">My Notes</h1>
+                        <div className={`border-l-4 ${borderOn ? 'border-l-black dark:border-l-white' : 'border-l-transparent'} p-6 sm:p-10`}></div>
+                    </div>
+                    <div className="grid w-[75%] mx-auto">
+                        <h2 className="text-center text-2xl sm:text-3xl font-semibold mt-4 mb-5">Register</h2>
+                        <div className='mb-5'>
+                            <label htmlFor="" className={labelClass}>Name</label>
+                            <input type="text" className={inputClass} placeholder="Masukkan Name Anda" value={userName} onChange={handleUserName} />
+                        </div>
+                        <div className='mb-5'>
+                            <label htmlFor="" className={labelClass}>Email</label>
+                            <input type="text" className={inputClass} placeholder="Masukkan Email Anda" value={email} onChange={handleEmail} />
+                        </div>
+                        <div className='mb-5'>
+                            <label htmlFor="" className={labelClass}>Password</label>
+                            <input type="password" className={inputClass} placeholder="Masukkan Password Anda" value={password} onChange={handlePassword} />
+                        </div>
+                        <div className='mb-5'>
+                            <label htmlFor="" className={labelClass}>Major</label>
+                            <DropDown options={['Informatika', 'Sistem Informatika', 'Data Science and Analytics']} selected={selected} onSelected={handleSelected} style={"bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"} />
+                        </div>
 
-                    <label htmlFor="" className="text-start font-semibold">Name</label>
-                    <input type="text" className="border-2 p-1 mb-5 rounded-lg" placeholder="Masukkan Name Anda" value={userName} onChange={handleUserName}/>
+                        <div className='flex justify-center w-full'>
 
-                    <label htmlFor="" className="text-start font-semibold">Email</label>
-                    <input type="text" className="border-2 p-1 mb-5 rounded-lg" placeholder="Masukkan Email Anda" value={email} onChange={handleEmail}/>
+                            <button className="w-1/2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800" onClick={handleRegister}>Register</button>
 
-                    <label htmlFor="" className="text-start font-semibold">Password</label>
-                    <input type="password" className="border-2 p-1 mb-5 rounded-lg" placeholder="Masukkan Password Anda" value={password} onChange={handlePassword}/>
+                        </div>
 
-                    <label htmlFor="" className="text-start font-semibold">Major</label>
-                    <DropDown options={['Informatika', 'Sistem Informatika', 'Data Science and Analytics']} selected={selected} onSelected={handleSelected} style={"mb-10 p-1"}/>
+                        <div className="grid w-1/2 mx-auto p-0 m-0 mb-10">
 
-                    <button className="font-bold bg-blue-500 p-1 rounded-lg hover:bg-blue-600 hover:text-white mb-10" onClick={handleRegister}>Register</button>
-
-                </div>
-                <div className="grid w-1/2 mx-auto p-0 m-0 mb-10">    
-                    
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    )
+            )
 }
 
-export default Register;
+            export default Register;
